@@ -315,7 +315,20 @@
             animation: shimmer 1.5s infinite;
         }
 
-        .btn-secondary {
+         .btn:disabled {
+             opacity: 0.6;
+             cursor: not-allowed;
+             transform: none;
+             box-shadow: 0 4px 12px rgba(52,103,81,0.2); /* Keep initial shadow */
+         }
+
+         .btn:disabled:hover {
+             background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%); /* Prevent hover change */
+             box-shadow: 0 4px 12px rgba(52,103,81,0.2); /* Prevent hover shadow */
+             animation: none; /* Stop shimmer on hover */
+         }
+
+         .btn-secondary {
             background: linear-gradient(90deg, var(--secondary) 0%, #d8b596 100%);
             color: var(--text);
             box-shadow: 0 4px 12px rgba(200,162,126,0.2);
@@ -358,7 +371,7 @@
 
          .quiz-option.disabled {
              pointer-events: none; /* Disable clicks after answer */
-             opacity: 0.7;
+             opacity: 0.8; /* Slightly dim disabled options */
          }
 
 
@@ -505,6 +518,29 @@
             font-weight: 600;
         }
 
+         /* Styling for highlighted text - simplified without :contains */
+         #lessonContent .highlight-e {
+             color: var(--correct);
+         }
+         #lessonContent .highlight-e::before {
+             background-color: rgba(77,157,116,0.15);
+         }
+
+         #lessonContent .highlight-s {
+             color: #6a7fc8;
+         }
+          #lessonContent .highlight-s::before {
+             background-color: rgba(106,127,200,0.15);
+         }
+
+         #lessonContent .highlight-g {
+             color: #9059b8;
+         }
+          #lessonContent .highlight-g::before {
+             background-color: rgba(144,89,184,0.15);
+         }
+
+
         .confetti {
             position: fixed;
             width: 10px;
@@ -579,64 +615,6 @@
             justify-content: center;
             margin-bottom: 22px;
         }
-
-        /* Highlight key concepts */
-        #lessonContent strong {
-            position: relative;
-            z-index: 1;
-            padding: 0 4px;
-        }
-
-        #lessonContent strong::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 8px;
-            background-color: rgba(200,162,126,0.3); /* Default highlight */
-            z-index: -1;
-            border-radius: 4px;
-        }
-
-        /* Environmental concept highlight */
-        #lessonContent strong:contains("Environmental"),
-        #lessonContent strong:contains("E)") {
-            color: var(--correct);
-        }
-
-        #lessonContent strong:contains("Environmental")::before,
-        #lessonContent strong:contains("E)")::before {
-            background-color: rgba(77,157,116,0.15);
-        }
-
-        /* Social concept highlight */
-        #lessonContent strong:contains("Social"),
-        #lessonContent strong:contains("S)") {
-            color: #6a7fc8;
-        }
-
-        #lessonContent strong:contains("Social")::before,
-        #lessonContent strong:contains("S)")::before {
-            background-color: rgba(106,127,200,0.15);
-        }
-
-        /* Governance concept highlight */
-        #lessonContent strong:contains("Governance"),
-        #lessonContent strong:contains("G)") {
-            color: #9059b8;
-        }
-
-        #lessonContent strong:contains("Governance")::before,
-        #lessonContent strong:contains("G)")::before {
-            background-color: rgba(144,89,184,0.15);
-        }
-
-         /* Helper for :contains pseudo-class */
-         /* Note: :contains is not a standard CSS pseudo-class.
-            This implementation relies on JavaScript or a preprocessor,
-            but for demonstration, we keep it as intended by the user.
-            A more robust solution would involve adding classes to the HTML. */
 
 
         /* Mobile styles */
@@ -796,21 +774,13 @@
     </div>
 
     <script>
-        // Helper function for :contains pseudo-class (for demonstration purposes)
-        // In a real app, prefer adding classes based on content.
-        (function($){
-            $.expr[':'].contains = function(a, i, m) {
-                return $(a).text().indexOf(m[3]) >= 0;
-            };
-        }(jQuery)); // Assumes jQuery is available, or implement vanilla JS equivalent
-
         // App State
         const state = {
             userName: null,
             currentBrand: null,
             currentLessonIndex: 0,
             currentQuizIndex: 0,
-            score: 0,
+            score: 0, // Score for the current brand's quiz
             totalQuestions: 0,
             correctAnswers: 0,
             selectedOptionIndex: null,
@@ -822,41 +792,41 @@
             patagonia: {
                 name: "Patagonia",
                 emoji: "🏔️",
-                characterEmojis: ["🧗‍♀️", "🌲", "🏞️", "🧠", "🧐", "🥳"], // Add quiz/result emojis
+                characterEmojis: ["🧗‍♀️", "🌲", "🏞️", "🧠", "🧐", "🥳"], // Welcome, Lessons 1, 2, 3, Quiz, Result
                 lessons: [
                     {
                         title: "Patagonia's Mountain Mission",
                         emoji: "📚",
                         image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Patagonia%27s_Flag.png/800px-Patagonia%27s_Flag.png", // Placeholder Image URL
                         content: `<p>Meet Yvon Chouinard, the climber who started Patagonia in 1973! 🧗‍♂️ His mission wasn't just selling gear, but using business to "save our home planet." [1]</p>
-                         <p>Right from the start, they focused on making durable stuff you can repair, fighting against throwaway culture. (That's a core <strong>Environmental (E)</strong> principle!) ♻️</p>
-                         <p>In a wild move in 2022, Chouinard gave away the company! All profits not reinvested go to fighting climate change. [2] (Talk about baked-in <strong>Governance (G)</strong> for impact!) 🌱</p>`
+                         <p>Right from the start, they focused on making durable stuff you can repair, fighting against throwaway culture. (That's a core <strong class="highlight-e">Environmental (E)</strong> principle!) ♻️</p>
+                         <p>In a wild move in 2022, Chouinard gave away the company! All profits not reinvested go to fighting climate change. [2] (Talk about baked-in <strong class="highlight-g">Governance (G)</strong> for impact!) 🌱</p>`
                     },
                     {
                         title: "Gear Up Sustainably",
                         emoji: "🧵",
                         image: "https://www.patagonia.com/static/on/demandware.static/-/Library-Sites-patagonia/default/dw55b4e3b1/images/wornwear/wornwear-masthead-2560.jpg", // Placeholder Image URL
-                        content: `<p>Patagonia pioneered using recycled materials! Think jackets from plastic bottles 🍶, plus recycled wool and organic cotton. (Huge <strong>Environmental (E)</strong> wins here!) [3]</p>
-                         <p>Lost a button? Tore your jacket? Their Worn Wear program encourages repair over replacement. They even have a massive repair center! [4] (Extending product life is key <strong>Environmental (E)</strong> action.) 🧩</p>
-                         <p>They switched to 100% organic cotton back in 1996, avoiding toxic pesticides. [5] (Another example of prioritizing <strong>Environmental (E)</strong> health in their <strong>Supply Chain</strong> - the journey materials take from source to product.) 🌿</p>`
+                        content: `<p>Patagonia pioneered using recycled materials! Think jackets from plastic bottles 🍶, plus recycled wool and organic cotton. (Huge <strong class="highlight-e">Environmental (E)</strong> wins here!) [3]</p>
+                         <p>Lost a button? Tore your jacket? Their Worn Wear program encourages repair over replacement. They even have a massive repair center! [4] (Extending product life is key <strong class="highlight-e">Environmental (E)</strong> action.) 🧩</p>
+                         <p>They switched to 100% organic cotton back in 1996, avoiding toxic pesticides. [5] (Another example of prioritizing <strong class="highlight-e">Environmental (E)</strong> health in their <strong class="highlight-s">Supply Chain</strong> - the journey materials take from source to product.) 🌿</p>`
                     },
                     {
                         title: "Activist for Earth",
                         emoji: "✊",
                         image: "https://www.patagonia.com/static/on/demandware.static/-/Library-Sites-patagonia/default/dw79984785/images/press/2022/Pata_Yosemite_Activism_2022_Masthead.jpg", // Placeholder Image URL
-                        content: `<p>Patagonia gives 1% of ALL sales to environmental groups. That's based on revenue, not just profit! [6] (Direct <strong>Environmental (E)</strong> funding & a bold <strong>Social (S)</strong> statement!) 💚</p>
-                         <p>They don't shy away from a fight, even suing governments to protect public lands. [7] (Using their voice for environmental protection - a powerful <strong>Environmental (E)</strong> stance.) ⚖️</p>
-                         <p>They also make films about environmental issues, spreading awareness far and wide. 🎬 (Raising public awareness is both a <strong>Social (S)</strong> and <strong>Environmental (E)</strong> contribution.)</p>`
+                        content: `<p>Patagonia gives 1% of ALL sales to environmental groups. That's based on revenue, not just profit! [6] (Direct <strong class="highlight-e">Environmental (E)</strong> funding & a bold <strong class="highlight-s">Social (S)</strong> statement!) 💚</p>
+                         <p>They don't shy away from a fight, even suing governments to protect public lands. [7] (Using their voice for environmental protection - a powerful <strong class="highlight-e">Environmental (E)</strong> stance.) ⚖️</p>
+                         <p>They also make films about environmental issues, spreading awareness far and wide. 🎬 (Raising public awareness is both a <strong class="highlight-s">Social (S)</strong> and <strong class="highlight-e">Environmental (E)</strong> contribution.)</p>`
                     },
                      // --- CONCLUDING LESSON (Same for all brands) ---
                      {
                          title: "Beyond the Product: The Double View!",
                          emoji: "💡", // Lightbulb emoji
                          image: "https://sustainability.uq.edu.au/files/5876/stacked-esg-pillars-colour.jpg", // Placeholder Image URL
-                         content: `<p>So, what's the big takeaway from brands like Patagonia and Tony's? We see <strong>how</strong> businesses <em>operate</em> in the world and the impact that creates – from their <strong>carbon footprint</strong> and waste (<strong>E</strong>), to how they treat workers (<strong>S</strong>), to how openly they run things (<strong>G</strong>).</p>
+                         content: `<p>So, what's the big takeaway from brands like Patagonia and Tony's? We see <strong >how</strong> businesses <em>operate</em> in the world and the impact that creates – from their <strong class="highlight-e">carbon footprint</strong> and waste (<strong class="highlight-e">E</strong>), to how they treat workers (<strong class="highlight-s">S</strong>), to how openly they run things (<strong class="highlight-g">G</strong>).</p>
                          <p>These aren't just 'nice' things to do; managing this impact is a core part of responsible business today!</p>
                          <p>Here's the cool part: the world also impacts businesses! Climate change, social issues, or customers who care can affect a company's costs, reputation, and future success. 💰🌍</p>
-                         <p>Smart businesses understand this <strong>"double view"</strong> – how their actions create impact AND how the world affects their business financially. They actively manage their impact AND prepare for a changing future.</p>
+                         <p>Smart businesses understand this <strong >"double view"</strong> – how their actions create impact AND how the world affects their business financially. They actively manage their impact AND prepare for a changing future.</p>
                          <p>Now, let's test your knowledge!</p>`
                      }
                 ],
@@ -890,41 +860,41 @@
             tonys: {
                 name: "Tony's Chocolonely",
                 emoji: "🍫",
-                 characterEmojis: ["🕵️‍♀️", "⚖️", "🤝", "🧠", "🧐", "🥳"], // Add quiz/result emojis
+                characterEmojis: ["🕵️‍♀️", "⚖️", "🤝", "🧠", "🧐", "🥳"], // Welcome, Lessons 1, 2, 3, Quiz, Result
                 lessons: [
                     {
                         title: "Tony's Sweet Mission",
                         emoji: "📚",
                         image: "https://tonyschocolonely.com/media/filer_public/2a/42/2a42f011-1729-4419-9e3c-6082f05c33a5/tonys_website_header_small.jpg", // Placeholder Image URL
                         content: `<p>Did you know that slavery still exists in the chocolate industry? 💔 Tony's Chocolonely was started in 2005 by three journalists who wanted to expose this issue and make 100% slave-free chocolate the norm. [8]</p>
-                         <p>Their mission isn't just about their own chocolate bar; it's about changing the entire industry. (This big-picture goal is part of their <strong>Social (S)</strong> impact strategy!) 🌐</p>
-                         <p>They work directly with cocoa farmers, paying them a higher price and investing in farming communities. (Fair wages and community support are key <strong>Social (S)</strong> actions in their <strong>Supply Chain</strong>.) 🧑‍🌾💰</p>`
+                         <p>Their mission isn't just about their own chocolate bar; it's about changing the entire industry. (This big-picture goal is part of their <strong class="highlight-s">Social (S)</strong> impact strategy!) 🌐</p>
+                         <p>They work directly with cocoa farmers, paying them a higher price and investing in farming communities. (Fair wages and community support are key <strong class="highlight-s">Social (S)</strong> actions in their <strong class="highlight-s">Supply Chain</strong>.) 🧑‍🌾💰</p>`
                     },
                     {
                         title: "Five Sourcing Principles",
                         emoji: "🖐️",
                         image: "https://tonyschocolonely.com/media/filer_public/c0/e6/c0e685f1-e749-4a08-a633-5e2c99ef809a/open_chain_principes.png", // Placeholder Image URL
-                        content: `<p>Tony's has Five Sourcing Principles to ensure their chocolate is slave-free and ethical: from using 100% traceable beans to paying a Living Income Reference Price. [9] (These clear guidelines are part of their <strong>Governance (G)</strong> and <strong>Social (S)</strong> framework.) ✅</p>
-                         <p>They even publish an annual report detailing their progress and challenges, being super transparent about their supply chain. [10] (Transparency is a key aspect of good <strong>Governance (G)</strong> and builds trust.) 📈</p>
-                         <p>While their main focus is <strong>Social (S)</strong> issues in the supply chain, they also consider <strong>Environmental (E)</strong> impacts like deforestation and packaging. (They aim for positive impact across the board!) 🌳📦</p>`
+                        content: `<p>Tony's has Five Sourcing Principles to ensure their chocolate is slave-free and ethical: from using 100% traceable beans to paying a Living Income Reference Price. [9] (These clear guidelines are part of their <strong class="highlight-g">Governance (G)</strong> and <strong class="highlight-s">Social (S)</strong> framework.) ✅</p>
+                         <p>They even publish an annual report detailing their progress and challenges, being super transparent about their supply chain. [10] (Transparency is a key aspect of good <strong class="highlight-g">Governance (G)</strong> and builds trust.) 📈</p>
+                         <p>While their main focus is <strong class="highlight-s">Social (S)</strong> issues in the supply chain, they also consider <strong class="highlight-e">Environmental (E)</strong> impacts like deforestation and packaging. (They aim for positive impact across the board!) 🌳📦</p>`
                     },
                     {
                         title: "Sweet Success, Serious Purpose",
                         emoji: "🥳",
                         image: "https://tonyschocolonely.com/media/filer_public/a6/2e/a62e3178-b102-4a32-8297-379f86a2b731/tonys_website_impact_header.jpg", // Placeholder Image URL
-                        content: `<p>Tony's unique, unevenly divided chocolate bar is a symbol of the inequality in the chocolate industry. (A clever way to raise <strong>Social (S)</strong> awareness with their product design!) 🍫➡️</p>
-                         <p>They don't just keep their sourcing methods secret; they invite other chocolate companies to join their "Open Chain" initiative to share knowledge and scale up impact. [11] (Collaborating for industry-wide change is powerful <strong>Social (S)</strong> leadership!) 🤝</p>
-                         <p>By showing that a profitable business can be built on ethical principles, Tony's inspires consumers and other businesses to demand and create more sustainable supply chains. (Their success is a win for <strong>Social (S)</strong> responsibility and a good example of how strong <strong>Governance (G)</strong> enables positive impact.) 🌟</p>`
+                        content: `<p>Tony's unique, unevenly divided chocolate bar is a symbol of the inequality in the chocolate industry. (A clever way to raise <strong class="highlight-s">Social (S)</strong> awareness with their product design!) 🍫➡️</p>
+                         <p>They don't just keep their sourcing methods secret; they invite other chocolate companies to join their "Open Chain" initiative to share knowledge and scale up impact. [11] (Collaborating for industry-wide change is powerful <strong class="highlight-s">Social (S)</strong> leadership!) 🤝</p>
+                         <p>By showing that a profitable business can be built on ethical principles, Tony's inspires consumers and other businesses to demand and create more sustainable supply chains. (Their success is a win for <strong class="highlight-s">Social (S)</strong> responsibility and a good example of how strong <strong class="highlight-g">Governance (G)</strong> enables positive impact.) 🌟</p>`
                     },
                     // --- CONCLUDING LESSON (Same for all brands) ---
                     {
                         title: "Beyond the Product: The Double View!",
                         emoji: "💡", // Lightbulb emoji
                          image: "https://sustainability.uq.edu.au/files/5876/stacked-esg-pillars-colour.jpg", // Placeholder Image URL
-                        content: `<p>So, what's the big takeaway from brands like Patagonia and Tony's? We see <strong>how</strong> businesses <em>operate</em> in the world and the impact that creates – from their <strong>carbon footprint</strong> and waste (<strong>E</strong>), to how they treat workers (<strong>S</strong>), to how openly they run things (<strong>G</strong>).</p>
+                        content: `<p>So, what's the big takeaway from brands like Patagonia and Tony's? We see <strong >how</strong> businesses <em>operate</em> in the world and the impact that creates – from their <strong class="highlight-e">carbon footprint</strong> and waste (<strong class="highlight-e">E</strong>), to how they treat workers (<strong class="highlight-s">S</strong>), to how openly they run things (<strong class="highlight-g">G</strong>).</p>
                          <p>These aren't just 'nice' things to do; managing this impact is a core part of responsible business today!</p>
                          <p>Here's the cool part: the world also impacts businesses! Climate change, social issues, or customers who care can affect a company's costs, reputation, and future success. 💰🌍</p>
-                         <p>Smart businesses understand this <strong>"double view"</strong> – how their actions create impact AND how the world affects their business financially. They actively manage their impact AND prepare for a changing future.</p>
+                         <p>Smart businesses understand this <strong >"double view"</strong> – how their actions create impact AND how the world affects their business financially. They actively manage their impact AND prepare for a changing future.</p>
                          <p>Now, let's test your knowledge!</p>`
                     }
                 ],
@@ -949,7 +919,7 @@
                      },
                      {
                          question: "The 'Double View' discussed in the final lesson refers to understanding:",
-                         options: ["How a business impacts the world and how the world impacts the business", "How much profit a business makes and how much it spends on marketing", "How many products a business sells and how many employees it has"],
+                         options: ["How a business impacts the world and how the world impacts the business", "How much profit a business makes and how much it spends on marketing", "How many products a business sells and how many employees has it has"],
                          correctAnswer: 0,
                          explanation: "The 'Double View' in sustainable business means understanding both the impact a company has *on* the environment and society, and the financial and operational risks/opportunities that external environmental and social factors have *on* the company."
                      }
@@ -987,6 +957,7 @@
         // --- App Flow Functions ---
 
         function startApp() {
+            console.log("startApp function called");
             const name = userNameInput.value.trim();
             if (name) {
                 state.userName = name;
@@ -994,12 +965,15 @@
                 welcomeContainer.classList.add('hidden');
                 brandSelect.classList.remove('hidden');
                 updateProgressBar();
+                console.log("App started, showing brand select.");
             } else {
                 alert("Please enter your name to start!");
+                console.log("Name input empty, showing alert.");
             }
         }
 
         function selectBrand(brandKey) {
+            console.log(`selectBrand function called with key: ${brandKey}`);
             state.currentBrand = brandKey;
             state.currentLessonIndex = 0;
             state.score = 0;
@@ -1010,14 +984,17 @@
             displayLesson();
             updateScoreDisplay();
             updateProgressBar();
+             console.log(`Brand '${brandKey}' selected, showing first lesson.`);
         }
 
         function displayLesson() {
+            console.log(`displayLesson function called for lesson index: ${state.currentLessonIndex}`);
             const brand = brands[state.currentBrand];
             const lesson = brand.lessons[state.currentLessonIndex];
 
             lessonTitle.innerHTML = `<span class="title-emoji">${lesson.emoji}</span> ${lesson.title}`;
-            lessonCharacter.textContent = brand.characterEmojis[state.currentLessonIndex % brand.characterEmojis.length]; // Cycle through emojis
+            // Cycle through character emojis based on lesson index
+            lessonCharacter.textContent = brand.characterEmojis[state.currentLessonIndex % (brand.characterEmojis.length - 2)] || '🤔'; // Exclude last two for quiz/result
             lessonImage.innerHTML = `<img src="${lesson.image}" alt="${lesson.title} illustration">`; // Set image source
             lessonContent.innerHTML = lesson.content;
 
@@ -1025,26 +1002,32 @@
             if (state.currentLessonIndex === brand.lessons.length - 1) {
                  finishLessonBtn.textContent = `Start Quiz ${brand.emoji}`;
                  finishLessonBtn.onclick = () => startQuiz(state.currentBrand);
+                 console.log("Displayed last lesson, button set to Start Quiz.");
             } else {
-                 finishLessonBtn.textContent = `Next Lesson ${brand.lessonEmojis[state.currentLessonIndex + 1] || '➡️'}`;
+                 const nextLessonEmoji = brand.characterEmojis[(state.currentLessonIndex + 1) % (brand.characterEmojis.length - 2)] || '➡️';
+                 finishLessonBtn.textContent = `Next Lesson ${nextLessonEmoji}`;
                  finishLessonBtn.onclick = nextLesson;
+                 console.log(`Displayed lesson ${state.currentLessonIndex}, button set to Next Lesson.`);
             }
+             finishLessonBtn.disabled = false; // Enable button
         }
 
         function nextLesson() {
+             console.log("nextLesson function called.");
+             finishLessonBtn.disabled = true; // Disable button while transitioning
              state.currentLessonIndex++;
              const brand = brands[state.currentBrand];
              if (state.currentLessonIndex < brand.lessons.length) {
                  displayLesson();
                  updateProgressBar();
              } else {
-                 // Should not happen if the button handler changes on the last lesson
-                 // But as a fallback:
+                 // This case should ideally be handled by the button switching to startQuiz
                  startQuiz(state.currentBrand);
              }
         }
 
         function startQuiz(brandKey) {
+            console.log(`startQuiz function called for brand: ${brandKey}`);
             state.currentQuizIndex = 0;
             state.selectedOptionIndex = null;
             state.correctAnswers = 0; // Reset correct answers for the quiz session
@@ -1057,10 +1040,12 @@
             quizContainer.classList.remove('hidden');
             displayQuestion();
             updateProgressBar();
+            console.log("Quiz started, showing first question.");
         }
 
 
         function displayQuestion() {
+            console.log(`displayQuestion function called for question index: ${state.currentQuizIndex}`);
             const questionData = state.quizData[state.currentQuizIndex];
             quizQuestion.textContent = questionData.question;
             quizOptions.innerHTML = ''; // Clear previous options
@@ -1072,6 +1057,8 @@
             // Set quiz character emoji
             const brand = brands[state.currentBrand];
             quizCharacter.textContent = brand.characterEmojis[4] || '🧐'; // Use thinking/quiz emoji
+            quizCharacter.classList.remove('happy', 'celebrating', 'thinking'); // Reset animations
+            quizCharacter.classList.add('thinking');
 
 
             questionData.options.forEach((option, index) => {
@@ -1081,6 +1068,8 @@
                 optionElement.onclick = () => selectOption(index);
                 quizOptions.appendChild(optionElement);
             });
+             checkAnswerBtn.disabled = true; // Disable check button until option is selected
+             console.log(`Displayed question ${state.currentQuizIndex + 1}.`);
         }
 
         function getOptionEmoji(index) {
@@ -1090,6 +1079,7 @@
 
 
         function selectOption(optionIndex) {
+            console.log(`selectOption function called with index: ${optionIndex}`);
             // Remove selected class from all options
             quizOptions.querySelectorAll('.quiz-option').forEach(opt => {
                 opt.classList.remove('selected');
@@ -1099,10 +1089,19 @@
             quizOptions.children[optionIndex].classList.add('selected');
             state.selectedOptionIndex = optionIndex;
             checkAnswerBtn.classList.remove('hidden'); // Show check answer button
+            checkAnswerBtn.disabled = false; // Enable check answer button
+             console.log(`Option ${optionIndex} selected, Check Answer button enabled.`);
         }
 
         function checkAnswer() {
-            if (state.selectedOptionIndex === null) return; // Do nothing if no option is selected
+            console.log("checkAnswer function called.");
+            if (state.selectedOptionIndex === null) {
+                 console.log("No option selected, returning.");
+                return; // Do nothing if no option is selected
+            }
+
+            checkAnswerBtn.disabled = true; // Disable check button after clicking
+
 
             const questionData = state.quizData[state.currentQuizIndex];
             const selectedOptionElement = quizOptions.children[state.selectedOptionIndex];
@@ -1118,27 +1117,39 @@
             quizFeedback.classList.remove('hidden');
             if (isCorrect) {
                 state.correctAnswers++;
-                state.score += Math.round(100 / state.totalQuestions); // Award points
+                // Calculate score based on current question's worth
+                state.score += Math.round(100 / state.totalQuestions);
                 selectedOptionElement.classList.add('correct');
                 quizFeedback.innerHTML = `<strong>Correct!</strong> ${questionData.explanation}`;
                  quizCharacter.textContent = brands[state.currentBrand].characterEmojis[5] || '🥳'; // Celebrate
+                 quizCharacter.classList.remove('thinking');
+                 quizCharacter.classList.add('happy');
+                 console.log("Answer correct, score updated.");
             } else {
                 selectedOptionElement.classList.add('incorrect');
                  const correctAnswerElement = quizOptions.children[questionData.correctAnswer];
                  correctAnswerElement.classList.add('correct'); // Highlight the correct answer
                 quizFeedback.innerHTML = `<strong>Incorrect.</strong> The correct answer was: ${questionData.options[questionData.correctAnswer]}. ${questionData.explanation}`;
                  quizCharacter.textContent = brands[state.currentBrand].characterEmojis[4] || '🤔'; // Back to thinking/quiz
+                 quizCharacter.classList.remove('happy');
+                 quizCharacter.classList.add('thinking');
+                 console.log("Answer incorrect.");
             }
 
             updateScoreDisplay();
             checkAnswerBtn.classList.add('hidden'); // Hide check answer button
             nextQuestionBtn.classList.remove('hidden'); // Show next question button
+            nextQuestionBtn.disabled = false; // Enable next button
+
 
              // Update progress bar immediately after checking
              updateProgressBar();
+             console.log(`Answer checked. Is Correct: ${isCorrect}. Showing next question button.`);
         }
 
         function nextQuestion() {
+            console.log("nextQuestion function called.");
+             nextQuestionBtn.disabled = true; // Disable button while transitioning
             state.currentQuizIndex++;
 
             // Clear previous state
@@ -1150,13 +1161,16 @@
 
             if (state.currentQuizIndex < state.quizData.length) {
                 displayQuestion();
+                 console.log(`Moving to question ${state.currentQuizIndex + 1}.`);
             } else {
                 showResult();
+                 console.log("Quiz finished, showing results.");
             }
              updateProgressBar();
         }
 
         function showResult() {
+            console.log("showResult function called.");
             quizContainer.classList.add('hidden');
             resultContainer.classList.remove('hidden');
 
@@ -1165,6 +1179,8 @@
             finalScoreDisplay.textContent = finalScore;
 
              resultCharacter.textContent = brands[state.currentBrand].characterEmojis[5] || '🎉'; // Set result character emoji
+             resultCharacter.classList.remove('thinking', 'happy', 'celebrating');
+             resultCharacter.classList.add(finalScore === 100 ? 'celebrating' : 'happy');
 
 
             let resultText = "";
@@ -1188,16 +1204,18 @@
             resultFeedback.textContent = resultText;
 
             updateProgressBar();
+             console.log(`Results displayed. Final Score: ${finalScore}%`);
         }
 
         function returnToHome() {
+            console.log("returnToHome function called.");
             resultContainer.classList.add('hidden');
             brandSelect.classList.remove('hidden');
             // Reset core state for a new brand selection
             state.currentBrand = null;
             state.currentLessonIndex = 0;
             state.currentQuizIndex = 0;
-            state.score = 0;
+            state.score = 0; // Reset overall score
             state.correctAnswers = 0;
             state.totalQuestions = 0;
             state.selectedOptionIndex = null;
@@ -1205,55 +1223,79 @@
 
             updateScoreDisplay(); // Reset score display
             updateProgressBar(); // Reset progress bar
+             console.log("Returned to brand selection.");
         }
 
         // --- UI Update Functions ---
 
         function updateScoreDisplay() {
+             console.log(`Updating score display: ${state.score}`);
             scoreDisplay.textContent = state.score;
         }
 
         function updateProgressBar() {
             let totalSteps = 0;
             let currentStep = 0;
+            let progressPercentage = 0;
 
-            if (state.currentBrand) {
-                 const brand = brands[state.currentBrand];
-                 // Steps: 1 for selecting brand, N for lessons, 1 for starting quiz, M for quiz questions, 1 for results
-                 totalSteps = 1 + brand.lessons.length + 1 + brand.quiz.length + 1;
+            if (state.userName) { // Check if user has started
+                 if (state.currentBrand) {
+                     const brand = brands[state.currentBrand];
+                     const totalLessons = brand.lessons.length;
+                     const totalQuizQuestions = brand.quiz.length;
 
-                 // Progress in steps
-                 currentStep = 1; // Brand selected
-                 currentStep += state.currentLessonIndex; // Lessons completed
-                 if (state.currentLessonIndex === brand.lessons.length) {
-                     currentStep += 1; // Started quiz
-                     currentStep += state.currentQuizIndex; // Quiz questions answered
-                     if (state.currentQuizIndex === state.quizData.length) {
-                         currentStep += 1; // Quiz finished / Results shown
+                     // Define total steps in a flow (e.g., Select Brand -> Lessons -> Quiz -> Result)
+                     totalSteps = 1 + totalLessons + totalQuizQuestions + 1; // Select Brand + Lessons + Questions + Result
+
+                     // Calculate current step based on current screen and index
+                     currentStep = 1; // Start after brand selection
+                     currentStep += state.currentLessonIndex; // Add completed lessons
+
+                     if (state.currentLessonIndex === totalLessons) {
+                         currentStep += state.currentQuizIndex; // Add answered quiz questions
+
+                         if (state.currentQuizIndex === totalQuizQuestions && quizContainer.classList.contains('hidden') && !resultContainer.classList.contains('hidden')) {
+                              currentStep += 1; // Add step for finishing quiz/showing result
+                         }
                      }
+
+                     progressPercentage = (currentStep / totalSteps) * 100;
+                     // Ensure progress doesn't exceed 100% or go below 0%
+                     progressPercentage = Math.max(0, Math.min(100, progressPercentage));
+
+                 } else {
+                      // On Brand Select screen after entering name
+                      totalSteps = 1 + (Object.keys(brands).reduce((sum, key) => sum + brands[key].lessons.length, 0) + Object.keys(brands).reduce((sum, key) => sum + brands[key].quiz.length, 0) + Object.keys(brands).length * 2); // Rough estimate for total potential journey
+                      currentStep = 1; // Passed welcome
+                       progressPercentage = 5; // Small progress indication after starting
                  }
+
             } else {
-                // Welcome screen
-                 totalSteps = 1;
-                 currentStep = 0; // Before starting
+                 // On Welcome screen
+                 progressPercentage = 0;
             }
 
-            const progressPercentage = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
             progressBar.style.width = `${progressPercentage}%`;
+            console.log(`Progress Bar updated. Current Step: ${currentStep}, Total Steps: ${totalSteps}, Percentage: ${progressPercentage.toFixed(2)}%`);
         }
+
 
         // --- Confetti Effect ---
         function triggerConfetti() {
-            const confettiCount = 100;
+            console.log("Triggering confetti!");
+            const confettiCount = 150; // Increased confetti count
             for (let i = 0; i < confettiCount; i++) {
                 const confetti = document.createElement('div');
                 confetti.classList.add('confetti');
                 confetti.style.left = `${Math.random() * 100}vw`;
-                confetti.style.animationDelay = `${Math.random() * 2}s`;
+                confetti.style.animationDelay = `${Math.random() * 3}s`; // Increased delay range
                 confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`; // Random color
                  confetti.style.width = `${Math.random() * 8 + 4}px`; // Random size
                  confetti.style.height = `${Math.random() * 8 + 4}px`; // Random size
-                 confetti.style.animationDuration = `${Math.random() * 3 + 2}s`; // Random duration
+                 confetti.style.animationDuration = `${Math.random() * 4 + 3}s`; // Increased duration range
+                 confetti.style.opacity = Math.random() * 0.7 + 0.3; // Random opacity
+                 confetti.style.transform = `rotate(${Math.random() * 360}deg)`; // Initial random rotation
+
                 document.body.appendChild(confetti);
 
                 // Remove confetti after animation finishes
@@ -1266,6 +1308,7 @@
 
         // --- Initial Setup ---
         document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM fully loaded. Initializing app.");
             // Initial state is welcome screen
             welcomeContainer.classList.remove('hidden');
             brandSelect.classList.add('hidden');
@@ -1275,17 +1318,25 @@
 
             updateScoreDisplay();
             updateProgressBar();
+
+            // Optional: If you want the Enter key to trigger startApp in the name input
+            userNameInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // Prevent form submission
+                    startApp();
+                }
+            });
         });
 
-         // Implement a simple :contains helper if jQuery is not used
-         if (typeof jQuery === 'undefined') {
-             console.warn("jQuery not found. ':contains' CSS pseudo-class will not work for highlighting.");
-             // A vanilla JS alternative would involve searching for text nodes and wrapping them,
-             // or adding classes based on content when the lesson content is loaded.
-             // For simplicity, we'll just log a warning here.
-         }
+         // Note about content highlighting:
+         // The CSS rules for :contains("Environmental"), etc., are not standard CSS.
+         // A JavaScript approach is needed to add classes like 'highlight-e', 'highlight-s', 'highlight-g'
+         // to the <strong> tags based on their content if you want that highlighting to work.
+         // This code does NOT implement that JavaScript, only the CSS rules assuming classes exist.
+         // I've added the CSS rules using classes (.highlight-e, .highlight-s, .highlight-g)
+         // and updated the lesson content HTML to use these classes for demonstration.
 
 
     </script>
-    </body>
+</body>
 </html>
